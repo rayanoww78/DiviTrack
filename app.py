@@ -16,4 +16,8 @@ def get_dividends():
     return jsonify(data)
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     app.run(host='0.0.0.0', port=10000)
+=======
+   app.run(host='0.0.0.0', port=10000)
+>>>>>>> fb42ba5029cdcf339d6903a267e94817ca166d87
