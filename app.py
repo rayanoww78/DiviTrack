@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify
+import divi_maker
 app = Flask(__name__)
 
 @app.route('/')
@@ -9,15 +10,11 @@ def index():
 def get_dividends():
     # Exemple statique, à remplacer par appel réel à Budget Insight
     data = [
-        {"date": "2025-03-12", "company": "TotalEnergies", "amount": 28.40},
-        {"date": "2025-03-04", "company": "Air Liquide", "amount": 15.20},
-        {"date": "2025-02-20", "company": "Vinci", "amount": 12.80},
+        {"date": "2025-03-12", "company": "TotalEnergies", "amount prediction for 2025": divi_maker.get_divi("TTE")},
+        {"date": "2025-03-04", "company": "Apple", "amount": divi_maker.get_divi("AAPL")},
+        {"date": "2025-02-20", "company": "Vinci", "amount": divi_maker.get_divi("AMZN")},
     ]
     return jsonify(data)
 
 if __name__ == '__main__':
-<<<<<<< HEAD
     app.run(host='0.0.0.0', port=10000)
-=======
-   app.run(host='0.0.0.0', port=10000)
->>>>>>> fb42ba5029cdcf339d6903a267e94817ca166d87
