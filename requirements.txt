@@ -1,6 +1,2 @@
 flask
 requests
-<<<<<<< HEAD
-=======
-
->>>>>>> fb42ba5029cdcf339d6903a267e94817ca166d87
