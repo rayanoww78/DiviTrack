@@ -3,99 +3,66 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>DiviTrack - Prévisions</title>
+  <title>DiviTrack | Prévisions Analystes 2025</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gradient-to-tr from-gray-100 via-white to-gray-200 min-h-screen flex items-center justify-center px-4 py-10">
 
-  <div class="max-w-3xl mx-auto py-10 px-6">
-    <h1 class="text-3xl font-bold mb-6 text-center">📊 DiviTrack - Analyse des prévisions 2025</h1>
+  <div class="bg-white shadow-2xl rounded-2xl max-w-xl w-full p-8">
+    <h1 class="text-3xl font-extrabold text-center text-blue-800 mb-6">
+      📊 DiviTrack — Estimations 2025
+    </h1>
 
-    <section class="bg-white p-6 rounded-xl shadow-md mt-6">
-      <h2 class="text-xl font-semibold mb-4">🔍 Recherche entreprise</h2>
+    <p class="text-gray-600 text-center mb-6 text-sm">
+      Entrez le nom d'une entreprise (ex : <strong>Apple</strong>, <strong>Total</strong>, <strong>Air Liquide</strong>) pour voir les prévisions d'analystes.
+    </p>
 
-      <input type="text" id="searchInput" placeholder="Ex : Apple, Microsoft, Total..."
-        class="border px-4 py-2 rounded-lg w-full mb-4" />
+    <input type="text" id="searchInput"
+      placeholder="Nom de l'entreprise"
+      class="border border-gray-300 px-4 py-3 rounded-xl w-full mb-4 focus:ring-2 focus:ring-blue-400 outline-none shadow-sm text-sm" />
 
-      <button onclick="rechercherEntreprise()"
-        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-        Rechercher
-      </button>
+    <button onclick="rechercherLive()"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all duration-200">
+      🔍 Lancer l'analyse
+    </button>
 
-      <div id="resultat" class="mt-4 text-sm text-gray-800"></div>
-    </section>
+    <div id="resultat"
+      class="mt-6 text-sm text-gray-800 font-medium border-t pt-4 border-gray-200 min-h-[5rem] text-center">
+      ⏳ En attente de recherche...
+    </div>
+
+    <footer class="text-xs text-center text-gray-400 mt-8">
+      DiviTrack © 2025 — Précisions fournies par Yahoo Finance 🧠
+    </footer>
   </div>
 
   <script>
-    const noms = {
-      "OR.PA": "L'Oréal",
-      "AI.PA": "Air Liquide",
-      "MC.PA": "LVMH",
-      "SAN.PA": "Sanofi",
-      "BN.PA": "Danone",
-      "BNP.PA": "BNP Paribas",
-      "SU.PA": "Schneider Electric",
-      "GLE.PA": "Société Générale",
-      "VIE.PA": "Veolia",
-      "DG.PA": "Vinci",
-      "ML.PA": "Michelin",
-      "RMS.PA": "Hermès",
-      "RI.PA": "Pernod Ricard",
-      "ENGI.PA": "Engie",
-      "CA.PA": "Carrefour",
-      "ACA.PA": "Crédit Agricole",
-      "EN.PA": "Bouygues",
-      "STM.PA": "STMicroelectronics",
-      "CAP.PA": "Capgemini",
-      "TTE": "TotalEnergies",
-      "AAPL": "Apple",
-      "MSFT": "Microsoft",
-      "GOOGL": "Alphabet (Google)",
-      "AMZN": "Amazon",
-      "META": "Meta Platforms",
-      "TSLA": "Tesla",
-      "NVDA": "NVIDIA",
-      "BRK-B": "Berkshire Hathaway",
-      "JPM": "JPMorgan Chase",
-      "JNJ": "Johnson & Johnson",
-      "V": "Visa",
-      "MA": "Mastercard",
-      "PG": "Procter & Gamble",
-      "HD": "Home Depot",
-      "DIS": "Disney",
-      "XOM": "ExxonMobil",
-      "PFE": "Pfizer",
-      "KO": "Coca-Cola",
-      "PEP": "PepsiCo",
-      "INTC": "Intel"
-    };
-
-    function nomEntreprise(ticker) {
-      return noms[ticker] || ticker;
-    }
-
-    async function rechercherEntreprise() {
+    async function rechercherLive() {
       const input = document.getElementById("searchInput").value.trim().toLowerCase();
       const div = document.getElementById("resultat");
-      div.innerHTML = "";
+      div.innerHTML = "⏳ Analyse en cours...";
 
-      const response = await fetch("/api/forecast");
-      const data = await response.json();
+      try {
+        const res = await fetch(`/api/forecast-live?entreprise=${encodeURIComponent(input)}`);
+        const data = await res.json();
 
-      const match = data.find(item =>
-        item.ticker.toLowerCase().includes(input) ||
-        nomEntreprise(item.ticker).toLowerCase().includes(input)
-      );
+        if (data.error) {
+          div.innerHTML = `<p class="text-red-600 font-semibold">❌ ${data.error}</p>`;
+          return;
+        }
 
-      if (match) {
-        div.innerHTML = \`
-          <p><strong>📈 Ticker :</strong> \${match.ticker}</p>
-          <p><strong>🧠 EPS estimé 2025 :</strong> \${match.eps_estimate ?? "Non disponible"}</p>
-          <p><strong>💸 Dividende estimé 2025 :</strong> \${match.dividend_estimate ?? "Non disponible"}</p>
-        \`;
-      } else {
-        div.innerHTML = "<p>❌ Entreprise non trouvée ou données manquantes.</p>";
+        div.innerHTML = `
+          <div class="text-left text-base text-gray-700">
+            <p class="mb-3"><span class="font-semibold text-gray-600">🏢 Entreprise :</span> <span class="text-blue-800">${data.entreprise} (${data.ticker})</span></p>
+            <p class="mb-3"><span class="font-semibold text-gray-600">🧠 EPS estimé (2025) :</span> <span class="text-green-700">${data.eps_estime}</span></p>
+            <p class="mb-3"><span class="font-semibold text-gray-600">💸 Dividende estimé (2025) :</span> <span class="text-yellow-700">${data.dividende_estime}</span></p>
+            <p class="text-xs text-gray-400 italic mt-4">Source : Yahoo Finance</p>
+          </div>
+        `;
+      } catch (e) {
+        console.error(e);
+        div.innerHTML = `<p class="text-red-500">⚠️ Erreur de connexion à l'API.</p>`;
       }
     }
   </script>
