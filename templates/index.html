@@ -9,9 +9,9 @@
 </head>
 <body class="bg-gray-100 font-sans">
   <header class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-    <a href="https://divitrack.onrender.com/?connection_id=2&code=iU1SCNdXZ0KE4YdpB4qSgOG3jZDZNL8T8oj%2FHYQHlUgUIHTYqA_Dqw_W5T27Z28tblPL%2FooUDhJHJVLdu9P214zfJRMrB2NbYlQ7hOA6Jb2kgwM0MPJIqtsWCYyuR0HP" <h1 class="text-2xl font-bold text-blue-600">📈 DiviTrack</h1></a>
+      <a href="https://divitrack.onrender.com/?connection_id=2&code=iU1SCNdXZ0KE4YdpB4qSgOG3jZDZNL8T8oj%2FHYQHlUgUIHTYqA_Dqw_W5T27Z28tblPL%2FooUDhJHJVLdu9P214zfJRMrB2NbYlQ7hOA6Jb2kgwM0MPJIqtsWCYyuR0HP"> <h1 class="text-2xl font-bold text-blue-600">📈 DiviTrack</h1></a>
     <button class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-xl shadow-md">
-      <a href="https://webview.powens.com/fr/connect/security?s=eyJkb21haW4iOiJyYXlhbm93dy1zYW5kYm94LmJpYXBpLnBybyIsImNsaWVudElkIjoiNjMzODYwNzIiLCJjb25uZWN0b3JDYXBhYmlsaXRpZXMiOlsiYmFuayJdLCJyZWRpcmVjdFVyaSI6Imh0dHBzOi8vZGl2aXRyYWNrLm9ucmVuZGVyLmNvbS8iLCJyZXR1cm5Db2RlIjp0cnVlLCJhY2Nlc3NUb2tlbiI6ImlVMVNDTmRYWjBLRTRZZHBCNHFTZ09HM2paRFpOTDhUOG9qL0hZUUhsVWdVSUhUWXFBX0Rxd19XNVQyN1oyOHRibFBML29vVURoSkhKVkxkdTlQMjE0emZKUk1yQjJOYllsUTdoT0E2SmIya2d3TTBNUEpJcXRzV0NZeXVSMEhQIiwic2Vzc2lvbklkIjoiZDZhOGFmNWEtYjkyMC00NTQ2LWI4MzAtOWFlMGU5MzM1YmFlIiwiZmxvd0lkIjoiYTM3NGIxMmMtMzYwOC00Y2U1LWJlOWUtZGZiNmQyZmM5ZWIxIn0%3D" >Connecter ma banque</a>
+      <a href="https://webview.powens.com/fr/connect/security?s=eyJkb21haW4iOiJyYXlhbm93dy1zYW5kYm94LmJpYXBpLnBybyIsImNsaWVudElkIjoiNjMzODYwNzIiLCJjb25uZWN0b3JDYXBhYmlsaXRpZXMiOlsiYmFuayJdLCJyZWRpcmVjdFVyaSI6Imh0dHBzOi8vZGl2aXRyYWNrLm9ucmVuZGVyLmNvbS8iLCJyZXR1cm5Db2RlIjp0cnVlLCJhY2Nlc3NUb2tlbiI6ImlVMVNDTmRYWjBLRTRZZHBCNHFTZ09HM2paRFpOTDhUOG9qL0hZUUhsVWdVSUhUWXFBX0Rxd19XNVQyN1oyOHRibFBML29vVURoSkhKVkxkdTlQMjE0emZKUk1yQjJOYllsUTdoT0E2SmIya2d3TTBNUEpJcXRzV0NZeXVSMEhQIiwic2Vzc2lvbklkIjoiZDZhOGFmNWEtYjkyMC00NTQ2LWI4MzAtOWFlMGU5MzM1YmFlIiwiZmxvd0lkIjoiYTM3NGIxMmMtMzYwOC00Y2U1LWJlOWUtZGZiNmQyZmM5ZWIxIn0%3D">Connecter ma banque</a>
     </button>
   </header>
 
@@ -31,7 +31,93 @@
       <canvas id="dividendChart" width="600" height="300" class="rounded-lg shadow-inner"></canvas>
     </section>
   </main>
-W
+  <section class="bg-white p-6 rounded-xl shadow-md mt-6">
+  <h2 class="text-xl font-semibold mb-4">🔍 Recherche prévisions analystes 2025</h2>
+
+  <input type="text" id="searchInput" placeholder="Ex : Apple, Microsoft, Total..."
+    class="border px-4 py-2 rounded-lg w-full mb-4" />
+
+  <button onclick="rechercherEntreprise()"
+    class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+    Rechercher
+  </button>
+
+  <div id="resultat" class="mt-4 text-sm text-gray-800"></div>
+</section>
+
+<script>
+async function rechercherEntreprise() {
+  const input = document.getElementById("searchInput").value.trim().toLowerCase();
+  const div = document.getElementById("resultat");
+  div.innerHTML = "";
+
+  const response = await fetch("/api/forecast");
+  const data = await response.json();
+
+  const correspondance = data.find(item => {
+    return item.ticker.toLowerCase().includes(input)
+      || nomEntreprise(item.ticker).toLowerCase().includes(input);
+  });
+
+  if (correspondance) {
+    div.innerHTML = `
+      <p><strong>Ticker :</strong> ${correspondance.ticker}</p>
+      <p><strong>EPS estimé 2025 :</strong> ${correspondance.eps_estimate ?? "Non disponible"}</p>
+      <p><strong>Dividende estimé 2025 :</strong> ${correspondance.dividend_estimate ?? "Non disponible"}</p>
+    `;
+  } else {
+    div.innerHTML = "<p>❌ Entreprise non trouvée ou données manquantes.</p>";
+  }
+}
+
+// 🔁 Fonction locale pour lier les tickers à des noms compréhensibles
+function nomEntreprise(ticker) {
+const noms = {
+  "OR.PA": "L'Oréal",
+  "AI.PA": "Air Liquide",
+  "MC.PA": "LVMH",
+  "SAN.PA": "Sanofi",
+  "BN.PA": "Danone",
+  "BNP.PA": "BNP Paribas",
+  "SU.PA": "Schneider Electric",
+  "GLE.PA": "Société Générale",
+  "VIE.PA": "Veolia",
+  "DG.PA": "Vinci",
+  "ML.PA": "Michelin",
+  "RMS.PA": "Hermès",
+  "RI.PA": "Pernod Ricard",
+  "ENGI.PA": "Engie",
+  "CA.PA": "Carrefour",
+  "ACA.PA": "Crédit Agricole",
+  "EN.PA": "Bouygues",
+  "STM.PA": "STMicroelectronics",
+  "CAP.PA": "Capgemini",
+  "TTE": "TotalEnergies",
+  "AAPL": "Apple",
+  "MSFT": "Microsoft",
+  "GOOGL": "Alphabet (Google)",
+  "AMZN": "Amazon",
+  "META": "Meta Platforms",
+  "TSLA": "Tesla",
+  "NVDA": "NVIDIA",
+  "BRK-B": "Berkshire Hathaway",
+  "JPM": "JPMorgan Chase",
+  "JNJ": "Johnson & Johnson",
+  "V": "Visa",
+  "MA": "Mastercard",
+  "PG": "Procter & Gamble",
+  "HD": "Home Depot",
+  "DIS": "Disney",
+  "XOM": "ExxonMobil",
+  "PFE": "Pfizer",
+  "KO": "Coca-Cola",
+  "PEP": "PepsiCo",
+  "INTC": "Intel",
+};
+  return noms[ticker] || ticker;
+}
+</script>
+
   <footer class="text-center text-sm text-gray-500 py-4">
     © 2025 DiviTrack - Fait avec ❤️ pour analyser vos dividendes
   </footer>
