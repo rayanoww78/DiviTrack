@@ -22,7 +22,7 @@ nom_vers_ticker = {
     "intel": "INTC", "netflix": "NFLX", "adobe": "ADBE", "oracle": "ORCL", "qualcomm": "QCOM",
     "ibm": "IBM", "salesforce": "CRM", "boeing": "BA", "mcdonald's": "MCD", "walmart": "WMT",
     "chevron": "CVX", "cisco": "CSCO", "abbvie": "ABBV", "costco": "COST", "goldman sachs": "GS",
-    "3m": "MMM", "paypal": "PYPL", "starbucks": "SBUX", "ford": "F", "general motors": "GM"
+    "3m": "MMM", "paypal": "PYPL", "starbucks": "SBUX", "ford": "F", "general motors": "GM", "Klépierre" : "LI.PA", "Axa" : "CS.PA","Veralia" : "VRLA.PA"
 }
 
 @app.route('/')
