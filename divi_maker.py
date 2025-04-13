@@ -1,10 +1,21 @@
-import requests
+import yfinance as yf
 
+def get_yahoo_forecast(ticker):
+    stock = yf.Ticker(ticker)
+    info = stock.info
 
-def get_divi(ticker):
-    url = f"https://finnhub.io/api/v1/stock/metric?symbol={ticker}&metric=all&token=cvtto79r01qjg1369uggcvtto79r01qjg1369uh0"
-    r = requests.get(url)
-    data = r.json()
+    eps_estimate = info.get("forwardEps")
+    dividend_estimate = info.get("dividendRate")
 
-    # Extraire uniquement ce qui t'intéresse (exemple)
-    return {"ticker": ticker,"eps_2025": data["metric"].get("epsForward"),"dividend_2025": data["metric"].get("dividendPerShareForward")}
+    return {
+        "ticker": ticker,
+        "eps_2025": eps_estimate,
+        "dividend_2025": dividend_estimate
+    }
+
+# Exemples d'utilisation
+tickers = ["TTE", "AAPL", "MSFT", "DG.PA", "AI.PA"]  # TotalEnergies, Apple, Microsoft, Vinci, Air Liquide
+
+for t in tickers:
+    data = get_yahoo_forecast(t)
+    print(data)
