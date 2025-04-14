@@ -1,30 +1,47 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>DiviTrack - Accueil</title>
+  <title>DiviTrack - Analyse financière intelligente</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center px-4 py-10">
-  <div class="bg-white shadow-xl rounded-2xl p-8 max-w-xl w-full">
-    <h1 class="text-3xl font-extrabold text-center text-blue-800 mb-6">
-      🔍 DiviTrack
-    </h1>
+<body class="bg-gray-100 text-gray-900 font-sans">
 
-    <p class="text-center text-gray-600 mb-6">
-      Connectez-vous à votre banque pour obtenir votre analyse personnalisée des dividendes et EPS estimés 📈
-    </p>
+  <header class="bg-white shadow">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <h1 class="text-2xl font-extrabold text-blue-800 tracking-tight">
+        📈 DiviTrack
+      </h1>
+      <a href="/mon_portfolio" class="text-blue-600 hover:underline font-medium">
+        Voir mon portfolio
+      </a>
+    </div>
+  </header>
 
-    <a href="https://webview.powens.com/fr/connect/security?s=TON_TOKEN"
-       class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-lg font-semibold mb-4">
-      🔐 Se connecter à ma banque
-    </a>
+  <main class="flex flex-col items-center justify-center min-h-[80vh] text-center px-6">
+    <div class="max-w-2xl bg-white shadow-xl p-10 rounded-xl space-y-6">
+      <h2 class="text-3xl font-bold text-blue-800">
+        Analyse intelligente de vos investissements
+      </h2>
+      <p class="text-gray-600">
+        Connectez votre banque en toute sécurité avec Powens pour découvrir vos prévisions de dividendes et de bénéfices par action (EPS) personnalisées.
+      </p>
 
-    <a href="/analyse"
-       class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-3 rounded-lg font-semibold">
-      📊 Voir mon portfolio analysé
-    </a>
-  </div>
+      <a href="https://webview.powens.com/connect?domain=rayanoww-sandbox.biapi.pro&client_id=63386072&redirect_uri=https://divitrack.onrender.com/&max_connections=5"
+         class="inline-block bg-blue-700 hover:bg-blue-800 text-white text-lg font-semibold py-3 px-6 rounded-lg shadow transition">
+        🔐 Se connecter à ma banque
+      </a>
+
+      <p class="text-sm text-gray-400 mt-4">
+        Connexion sécurisée via Powens (anciennement Budget Insight)
+      </p>
+    </div>
+  </main>
+
+  <footer class="text-center text-sm text-gray-500 py-4">
+    © 2025 DiviTrack · Tous droits réservés
+  </footer>
+
 </body>
 </html>
