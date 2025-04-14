@@ -21,12 +21,7 @@ isin_to_ticker = {
 
 @app.route("/")
 def accueil():
-    return '''
-        <h2>DiviTrack - Connexion bancaire</h2>
-        <a href="https://webview.powens.com/connect?domain=rayanoww-sandbox.biapi.pro&client_id=63386072&redirect_uri=https://divitrack.onrender.com/&max_connections=5" target="_blank">
-            🔐 Se connecter à ma banque
-        </a>
-    '''
+    return render_template("index.html")
 
 @app.route("/redirect")  # Redirection après la Webview
 def redirect_from_webview():
