@@ -2,74 +2,29 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>DiviTrack | Prévisions Analystes 2025</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>DiviTrack - Accueil</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-tr from-gray-100 via-white to-gray-200 min-h-screen flex items-center justify-center px-4 py-10">
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center px-4 py-10">
+  <div class="bg-white shadow-xl rounded-2xl p-8 max-w-xl w-full">
+    <h1 class="text-3xl font-extrabold text-center text-blue-800 mb-6">
+      🔍 DiviTrack
+    </h1>
 
-    <a href="https://webview.powens.com/connect?domain=rayanoww-sandbox.biapi.pro&client_id=63386072&redirect_uri=https://divitrack.onrender.com/&max_connections=5"
-       class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-bold">
+    <p class="text-center text-gray-600 mb-6">
+      Connectez-vous à votre banque pour obtenir votre analyse personnalisée des dividendes et EPS estimés 📈
+    </p>
+
+    <a href="https://webview.powens.com/fr/connect/security?s=TON_TOKEN"
+       class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-lg font-semibold mb-4">
       🔐 Se connecter à ma banque
     </a>
 
-  <div class="bg-white shadow-2xl rounded-2xl max-w-xl w-full p-8">
-    <h1 class="text-3xl font-extrabold text-center text-blue-800 mb-6">
-      📊 DiviTrack — Estimations 2025
-    </h1>
-
-    <p class="text-gray-600 text-center mb-6 text-sm">
-      Entrez le nom d'une entreprise (ex : <strong>Apple</strong>, <strong>Total</strong>, <strong>Air Liquide</strong>) pour voir les prévisions d'analystes.
-    </p>
-
-    <input type="text" id="searchInput"
-      placeholder="Nom de l'entreprise"
-      class="border border-gray-300 px-4 py-3 rounded-xl w-full mb-4 focus:ring-2 focus:ring-blue-400 outline-none shadow-sm text-sm" />
-
-    <button onclick="rechercherLive()"
-      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all duration-200">
-      🔍 Lancer l'analyse
-    </button>
-
-    <div id="resultat"
-      class="mt-6 text-sm text-gray-800 font-medium border-t pt-4 border-gray-200 min-h-[5rem] text-center">
-      ⏳ En attente de recherche...
-    </div>
-
-    <footer class="text-xs text-center text-gray-400 mt-8">
-      DiviTrack © 2025 — Précisions fournies par Yahoo Finance 🧠
-    </footer>
+    <a href="/analyse"
+       class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-3 rounded-lg font-semibold">
+      📊 Voir mon portfolio analysé
+    </a>
   </div>
-
-  <script>
-    async function rechercherLive() {
-      const input = document.getElementById("searchInput").value.trim().toLowerCase();
-      const div = document.getElementById("resultat");
-      div.innerHTML = "⏳ Analyse en cours...";
-
-      try {
-        const res = await fetch(`/api/forecast-live?entreprise=${encodeURIComponent(input)}`);
-        const data = await res.json();
-
-        if (data.error) {
-          div.innerHTML = `<p class="text-red-600 font-semibold">❌ ${data.error}</p>`;
-          return;
-        }
-
-        div.innerHTML = `
-          <div class="text-left text-base text-gray-700">
-            <p class="mb-3"><span class="font-semibold text-gray-600">🏢 Entreprise :</span> <span class="text-blue-800">${data.entreprise} (${data.ticker})</span></p>
-            <p class="mb-3"><span class="font-semibold text-gray-600">🧠 EPS estimé (2025) :</span> <span class="text-green-700">${data.eps_estime}</span></p>
-            <p class="mb-3"><span class="font-semibold text-gray-600">💸 Dividende estimé (2025) :</span> <span class="text-yellow-700">${data.dividende_estime}</span></p>
-            <p class="text-xs text-gray-400 italic mt-4">Source : Yahoo Finance</p>
-          </div>
-        `;
-      } catch (e) {
-        console.error(e);
-        div.innerHTML = `<p class="text-red-500">⚠️ Erreur de connexion à l'API.</p>`;
-      }
-    }
-  </script>
 </body>
 </html>

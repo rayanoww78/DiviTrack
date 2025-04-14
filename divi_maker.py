@@ -13,9 +13,3 @@ def get_yahoo_forecast(ticker):
         "dividend_2025": dividend_estimate
     }
 
-# Exemples d'utilisation
-tickers = ["TTE", "AAPL", "MSFT", "DG.PA", "AI.PA"]  # TotalEnergies, Apple, Microsoft, Vinci, Air Liquide
-
-for t in tickers:
-    data = get_yahoo_forecast(t)
-    print(data)

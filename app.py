@@ -1,58 +1,83 @@
+
+from flask import Flask, redirect, request, session, jsonify, render_template
+import requests
+import yfinance as yf
 import os
 
-from flask import Flask, jsonify, render_template, request
-import yfinance as yf
-
 app = Flask(__name__)
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "supersecret")
 
-# dictionnaire pour faire correspondre les noms aux tickers
-nom_vers_ticker = {
-    "l'oréal": "OR.PA", "air liquide": "AI.PA", "lvmh": "MC.PA", "sanofi": "SAN.PA", "danone": "BN.PA",
-    "bnp paribas": "BNP.PA", "schneider electric": "SU.PA", "société générale": "GLE.PA", "veolia": "VIE.PA",
-    "vinci": "DG.PA", "michelin": "ML.PA", "hermès": "RMS.PA", "pernod ricard": "RI.PA", "engie": "ENGI.PA",
-    "carrefour": "CA.PA", "crédit agricole": "ACA.PA", "bouygues": "EN.PA", "stmicroelectronics": "STM.PA",
-    "capgemini": "CAP.PA", "total": "TTE", "stellantis": "STLA.PA", "legrand": "LR.PA", "airbus": "AIR.PA",
-    "arcelormittal": "MT.AS", "edf": "EDF.PA", "thales": "HO.PA", "kering": "KER.PA", "safran": "SAF.PA",
-    "vivendi": "VIV.PA", "worldline": "WLN.PA", "orange": "ORA.PA", "publicis": "PUB.PA", "unibail-rodamco": "URW.AS",
-    "alstom": "ALO.PA", "atos": "ATO.PA", "valeo": "FR.PA", "renault": "RNO.PA",
-    "apple": "AAPL", "microsoft": "MSFT", "google": "GOOGL", "alphabet": "GOOGL", "amazon": "AMZN",
-    "meta": "META", "facebook": "META", "tesla": "TSLA", "nvidia": "NVDA", "berkshire hathaway": "BRK-B",
-    "jpmorgan": "JPM", "johnson & johnson": "JNJ", "visa": "V", "mastercard": "MA", "procter & gamble": "PG",
-    "home depot": "HD", "disney": "DIS", "exxonmobil": "XOM", "pfizer": "PFE", "coca-cola": "KO", "pepsico": "PEP",
-    "intel": "INTC", "netflix": "NFLX", "adobe": "ADBE", "oracle": "ORCL", "qualcomm": "QCOM",
-    "ibm": "IBM", "salesforce": "CRM", "boeing": "BA", "mcdonald's": "MCD", "walmart": "WMT",
-    "chevron": "CVX", "cisco": "CSCO", "abbvie": "ABBV", "costco": "COST", "goldman sachs": "GS",
-    "3m": "MMM", "paypal": "PYPL", "starbucks": "SBUX", "ford": "F", "general motors": "GM", "Klépierre" : "LI.PA", "Axa" : "CS.PA","Veralia" : "VRLA.PA"
+# === Configuration Powens Sandbox ===
+CLIENT_ID = os.getenv("POWENS_CLIENT_ID", "63386072")
+CLIENT_SECRET = os.getenv("POWENS_CLIENT_SECRET", "VJdoBxPV0I4o091JChHOlJHY3Nkk1Vso")
+BASE_URL = "https://demo.biapi.pro/2.0"
+
+# Exemple ISIN -> ticker (à compléter)
+isin_to_ticker = {
+    "FR0000120271": "OR.PA",   # L'Oréal
+    "US0378331005": "AAPL",    # Apple
+    "FR0000131104": "BNP.PA",  # BNP Paribas
 }
 
-@app.route('/')
-def index():
-    return render_template("index.html")
+@app.route("/")
+def accueil():
+    return '''
+        <h2>DiviTrack - Connexion bancaire</h2>
+        <a href="https://webview.powens.com/fr/connect/security?s=TON_TOKEN" target="_blank">
+            🔐 Se connecter à ma banque
+        </a>
+    '''
 
-@app.route('/api/forecast-live')
-def forecast_live():
-    nom = request.args.get("entreprise", "").strip().lower()
+@app.route("/redirect")  # Redirection après la Webview
+def redirect_from_webview():
+    token = request.args.get("access_token")
+    if not token:
+        return "❌ Token manquant dans l'URL", 400
 
-    ticker = nom_vers_ticker.get(nom)
-    if not ticker:
-        return jsonify({"error": "Entreprise inconnue"}), 404
+    session["access_token"] = token
+    return redirect("/analyse")
 
-    stock = yf.Ticker(ticker)
-    info = stock.info
+@app.route("/analyse")
+def analyse_portefeuille():
+    access_token = session.get("access_token")
+    if not access_token:
+        return "❌ Aucune session utilisateur active", 403
 
-    eps = info.get("forwardEps")
-    dpa = info.get("dividendRate")
+    try:
+        headers = {"Authorization": f"Bearer {access_token}"}
+        res = requests.get(f"{BASE_URL}/portfolios/positions", headers=headers)
+        positions = res.json().get("positions", [])
 
-    return jsonify({
-        "entreprise": nom.title(),
-        "ticker": ticker,
-        "annee": 2025,
-        "eps_estime": f"{eps:.2f} $" if eps else "Non disponible",
-        "dividende_estime": f"{dpa:.2f} $" if dpa else "Non disponible"
-    })
+        enriched = []
+        for position in positions:
+            isin = position.get("isin")
+            quantity = position.get("quantity")
+            name = position.get("label", "Inconnu")
 
+            ticker = isin_to_ticker.get(isin)
+            if not ticker or not quantity:
+                continue
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # Render fournit un PORT dans ses variables d'environnement
-    app.run(host='0.0.0.0', port=port)
+            stock = yf.Ticker(ticker)
+            info = stock.info
+            eps = info.get("forwardEps")
+            dividend = info.get("dividendRate")
 
+            enriched.append({
+                "entreprise": name,
+                "ticker": ticker,
+                "quantite": quantity,
+                "eps_estime_par_action": eps,
+                "eps_total": round(eps * quantity, 2) if eps else None,
+                "dividende_estime_par_action": dividend,
+                "dividende_total": round(dividend * quantity, 2) if dividend else None
+            })
+
+        return render_template("mon_portfolio.html", portefeuille=enriched)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)
