@@ -23,7 +23,7 @@ isin_to_ticker = {
 def accueil():
     return '''
         <h2>DiviTrack - Connexion bancaire</h2>
-        <a href="https://webview.powens.com/fr/connect/security?s=TON_TOKEN" target="_blank">
+        <a href="https://webview.powens.com/connect?domain=rayanoww-sandbox.biapi.pro&client_id=63386072&redirect_uri=https://divitrack.onrender.com/&max_connections=5" target="_blank">
             🔐 Se connecter à ma banque
         </a>
     '''
