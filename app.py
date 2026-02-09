@@ -27,7 +27,7 @@ def accueil():
 def redirect_from_webview():
     token = request.args.get("access_token")
     if not token:
-        return "❌ Token manquant dans l'URL", 400
+        return "Token manquant dans l'URL", 400
 
     session["access_token"] = token
     return redirect("/analyse")
@@ -36,7 +36,7 @@ def redirect_from_webview():
 def analyse_portefeuille():
     access_token = session.get("access_token")
     if not access_token:
-        return "❌ Aucune session utilisateur active", 403
+        return "Aucune session utilisateur active", 403
 
     try:
         headers = {"Authorization": f"Bearer {access_token}"}
