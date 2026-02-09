@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
       data.forEach(d => {
         const li = document.createElement("li");
         li.className = "border-b pb-2";
-        li.textContent = `📅 ${d.date} — 🏢 ${d.company} — 💸 ${d.amount} €`;
+        li.textContent = `${d.date} — ${d.company} — ${d.amount} €`;
         list.appendChild(li);
       });
 
